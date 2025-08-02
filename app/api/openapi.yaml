@@ -1,0 +1,131 @@
+openapi: '3.0.4'
+info:
+  contact:
+    name: 'RoflBeacon'
+    url: 'https://beacon.rofleksey.ru'
+  title: 'RoflBeacon2 API'
+  version: '1.0.0'
+servers:
+  - description: 'API'
+    url: '/v1'
+paths:
+  /update/ingest:
+    post:
+      summary: 'Ingest Updates'
+      operationId: 'ingestUpdate'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateData'
+        required: true
+      responses:
+        '200':
+          description: 'Success'
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/General'
+          description: 'Bad Request'
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/General'
+          description: 'Unauthorized'
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/General'
+          description: 'Forbidden'
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/General'
+          description: 'Internal Server Error'
+
+components:
+  schemas:
+    General:
+      properties:
+        error:
+          default: true
+          enum:
+            - true
+          type: 'boolean'
+        msg:
+          type: 'string'
+        statusCode:
+          type: 'integer'
+          x-omitempty: true
+      required:
+        - 'error'
+        - 'msg'
+        - 'statusCode'
+      type: 'object'
+    UpdateData:
+      properties:
+        battery:
+          $ref: '#/components/schemas/BatteryData'
+        location:
+          $ref: '#/components/schemas/LocationData'
+        error:
+          type: string
+      type: 'object'
+    BatteryData:
+      properties:
+        level:
+          type: integer
+        charging:
+          type: boolean
+      required:
+        - 'level'
+        - 'charging'
+      type: 'object'
+    LocationData:
+      properties:
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        accuracy:
+          type: number
+          format: double
+        speed:
+          type: number
+          format: double
+        bearing:
+          type: number
+          format: double
+        provider:
+          type: string
+          enum:
+            - gps
+            - network
+        address:
+          type: string
+      required:
+        - 'latitude'
+        - 'longitude'
+        - 'accuracy'
+        - 'speed'
+        - 'bearing'
+        - 'provider'
+      type: 'object'
+    AccountStatus:
+      properties:
+        insideFences:
+          type: array
+          items:
+            type: integer
+            format: int64
+        stillLocation:
+          $ref: '#/components/schemas/LocationData'
+      required:
+        - 'insideFences'
+      type: 'object'
