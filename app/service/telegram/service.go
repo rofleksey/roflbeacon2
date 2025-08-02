@@ -72,6 +72,22 @@ func (s *Service) handleList(ctx context.Context, selfAcc *database.Account) {
 		return
 	}
 
+	myLastUpdates, err := s.queries.GetLastUpdateByAccountID(ctx, selfAcc.ID)
+	if err != nil {
+		slog.ErrorContext(ctx, "Failed to get last update",
+			slog.Any("error", err),
+		)
+		return
+	}
+
+	if len(myLastUpdates) == 0 {
+		slog.ErrorContext(ctx, "Myself doesn't have any updates")
+		return
+	}
+
+	myLastUpdate := myLastUpdates[0]
+	myLastLocation := myLastUpdate.Data.Location
+
 	var builder strings.Builder
 
 	for _, acc := range accounts {
@@ -104,8 +120,15 @@ func (s *Service) handleList(ctx context.Context, selfAcc *database.Account) {
 		if loc == nil {
 			builder.WriteString("Местоположение не определено")
 		} else {
-			mapLink := util.GenerateYandexLink(loc.Latitude, loc.Longitude)
-			builder.WriteString(fmt.Sprintf("[На карте](%s)\n", mapLink))
+			mapLink := util.GenerateYandexLinkForPoint(loc.Latitude, loc.Longitude)
+
+			builder.WriteString(fmt.Sprintf("[На карте](%s)", mapLink))
+			if myLastLocation != nil {
+				routeLink := util.GenerateYandexLinkForRoute(myLastLocation.Latitude, myLastLocation.Longitude, loc.Latitude, loc.Longitude, "mt")
+				builder.WriteString(fmt.Sprintf(" | [Маршрут до меня](%s)", routeLink))
+			}
+
+			builder.WriteString("\n")
 
 			if loc.Address != nil {
 				builder.WriteString(fmt.Sprintf("📍 %s\n", *loc.Address))
