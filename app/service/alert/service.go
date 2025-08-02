@@ -25,7 +25,7 @@ func New(di *do.Injector) (*Service, error) {
 	}, nil
 }
 
-func (s *Service) Alert(text string) {
+func (s *Service) Alert(text string, ignoreChatID *int64) {
 	accounts, err := s.queries.GetAllAccounts(s.appCtx)
 	if err != nil {
 		slog.ErrorContext(s.appCtx, "Failed to get all accounts",
@@ -35,7 +35,7 @@ func (s *Service) Alert(text string) {
 	}
 
 	for _, account := range accounts {
-		if account.ChatID == nil {
+		if account.ChatID == nil || account.ChatID == ignoreChatID {
 			continue
 		}
 
