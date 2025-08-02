@@ -118,7 +118,7 @@ func (s *Service) handleList(ctx context.Context, selfAcc *database.Account) {
 		builder.WriteString(")\n")
 
 		if loc == nil {
-			builder.WriteString("Местоположение не определено")
+			builder.WriteString("⚠️ Местоположение не определено")
 		} else {
 			mapLink := util.GenerateYandexLinkForPoint(loc.Latitude, loc.Longitude)
 
@@ -133,18 +133,20 @@ func (s *Service) handleList(ctx context.Context, selfAcc *database.Account) {
 			if loc.Address != nil {
 				builder.WriteString(fmt.Sprintf("📍 %s\n", *loc.Address))
 			} else {
-				builder.WriteString("Адрес не определен\n")
+				builder.WriteString("📍 Адрес не определен\n")
 			}
 		}
 
 		if lastUpdate.Data.Battery != nil {
-			builder.WriteString(fmt.Sprintf("🔋 %d%% ", lastUpdate.Data.Battery.Level))
-
 			if lastUpdate.Data.Battery.Charging {
 				builder.WriteString("⚡")
+			} else if lastUpdate.Data.Battery.Level > 30 {
+				builder.WriteString("🔋")
+			} else {
+				builder.WriteString("🪫")
 			}
 
-			builder.WriteString("\n")
+			builder.WriteString(fmt.Sprintf(" %d%%\n", lastUpdate.Data.Battery.Level))
 		}
 
 		builder.WriteString("\n\n")
