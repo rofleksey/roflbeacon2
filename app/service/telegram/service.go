@@ -92,9 +92,9 @@ func (s *Service) handleList(ctx context.Context, selfAcc *database.Account) {
 			return
 		}
 
-		builder.WriteString("* ")
+		builder.WriteString("*")
 		builder.WriteString(acc.Name)
-		builder.WriteString("* \n")
+		builder.WriteString("*\n")
 
 		if len(lastUpdates) == 0 {
 			builder.WriteString("Нет данных\n\n")

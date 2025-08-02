@@ -40,13 +40,13 @@ func (s *Service) alertFenceMovement(name string, enteredFences mapset.Set[datab
 	for fence := range leftFences.Iter() {
 		ruText := fmt.Sprintf("%s вышел из %s", name, fence.Name)
 
-		s.alertService.Broadcast(ruText)
+		s.alertService.Alert(ruText)
 	}
 
 	for fence := range enteredFences.Iter() {
 		ruText := fmt.Sprintf("%s вошел в %s", name, fence.Name)
 
-		s.alertService.Broadcast(ruText)
+		s.alertService.Alert(ruText)
 	}
 }
 
@@ -73,7 +73,7 @@ func (s *Service) handleStillLocation(ctx context.Context, acc *database.Account
 		acc.Status.StillLocation = nil
 
 		ruText := fmt.Sprintf("%s снова начал двигаться", acc.Name)
-		s.alertService.Broadcast(ruText)
+		s.alertService.Alert(ruText)
 
 		return nil
 	}
@@ -109,7 +109,7 @@ func (s *Service) handleStillLocation(ctx context.Context, acc *database.Account
 	acc.Status.StillLocation = &newLocation
 
 	ruText := fmt.Sprintf("%s остановился", acc.Name)
-	s.alertService.Broadcast(ruText)
+	s.alertService.Alert(ruText)
 
 	return nil
 }

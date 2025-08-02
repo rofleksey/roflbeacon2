@@ -25,7 +25,7 @@ func New(di *do.Injector) (*Service, error) {
 	}, nil
 }
 
-func (s *Service) Broadcast(text string) {
+func (s *Service) Alert(text string) {
 	accounts, err := s.queries.GetAllAccounts(s.appCtx)
 	if err != nil {
 		slog.ErrorContext(s.appCtx, "Failed to get all accounts",
