@@ -74,10 +74,6 @@ func (s *Service) handleList(ctx context.Context, selfAcc *database.Account) {
 
 	var builder strings.Builder
 
-	if len(accounts) <= 1 {
-		builder.WriteString("Список аккаунтов пуст")
-	}
-
 	for _, acc := range accounts {
 		if acc.ID == selfAcc.ID {
 			continue
@@ -92,18 +88,18 @@ func (s *Service) handleList(ctx context.Context, selfAcc *database.Account) {
 			return
 		}
 
-		builder.WriteString("*")
-		builder.WriteString(acc.Name)
-		builder.WriteString("*\n")
-
 		if len(lastUpdates) == 0 {
-			builder.WriteString("Нет данных\n\n")
 			continue
 		}
 
 		lastUpdate := lastUpdates[0]
-
 		loc := lastUpdate.Data.Location
+
+		builder.WriteString("*")
+		builder.WriteString(acc.Name)
+		builder.WriteString("* (")
+		builder.WriteString(util.TimeAgo(lastUpdate.Created))
+		builder.WriteString(")\n")
 
 		if loc == nil {
 			builder.WriteString("Местоположение не определено")
@@ -112,14 +108,20 @@ func (s *Service) handleList(ctx context.Context, selfAcc *database.Account) {
 			builder.WriteString(fmt.Sprintf("[На карте](%s)\n", mapLink))
 
 			if loc.Address != nil {
-				builder.WriteString(fmt.Sprintf("%s\n", *loc.Address))
+				builder.WriteString(fmt.Sprintf("📍 %s\n", *loc.Address))
 			} else {
 				builder.WriteString("Адрес не определен\n")
 			}
 		}
 
 		if lastUpdate.Data.Battery != nil {
-			builder.WriteString(fmt.Sprintf("Батарея: %d%%\n", lastUpdate.Data.Battery.Level))
+			builder.WriteString(fmt.Sprintf("🔋 %d%% ", lastUpdate.Data.Battery.Level))
+
+			if lastUpdate.Data.Battery.Charging {
+				builder.WriteString("⚡")
+			}
+
+			builder.WriteString("\n")
 		}
 
 		builder.WriteString("\n\n")
