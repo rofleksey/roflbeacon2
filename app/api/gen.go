@@ -22,12 +22,6 @@ const (
 	GeneralErrorTrue GeneralError = true
 )
 
-// Defines values for LocationDataProvider.
-const (
-	LocationDataProviderGps     LocationDataProvider = "gps"
-	LocationDataProviderNetwork LocationDataProvider = "network"
-)
-
 // AccountStatus defines model for AccountStatus.
 type AccountStatus struct {
 	InsideFences  []int64       `json:"insideFences"`
@@ -52,17 +46,11 @@ type GeneralError bool
 
 // LocationData defines model for LocationData.
 type LocationData struct {
-	Accuracy  float64              `json:"accuracy"`
-	Address   *string              `json:"address,omitempty"`
-	Bearing   float64              `json:"bearing"`
-	Latitude  float64              `json:"latitude"`
-	Longitude float64              `json:"longitude"`
-	Provider  LocationDataProvider `json:"provider"`
-	Speed     float64              `json:"speed"`
+	Accuracy  float64 `json:"accuracy"`
+	Address   *string `json:"address,omitempty"`
+	Latitude  float64 `json:"latitude"`
+	Longitude float64 `json:"longitude"`
 }
-
-// LocationDataProvider defines model for LocationData.Provider.
-type LocationDataProvider string
 
 // UpdateData defines model for UpdateData.
 type UpdateData struct {
@@ -225,18 +213,17 @@ func (sh *strictHandler) IngestUpdate(ctx *fiber.Ctx) error {
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/7xUTW/bOBD9K8bsHrWW87F70C3eNoWBHooEOQU5UOTYZkKR7HDo1g303wuSdix/AEmL",
-	"IieR1HDmzXvz+AzSdd5ZtBygeYYgl9iJvLyS0kXLtyw45gNPziOxxrzTNmiF12jlZs/Y5cXcUScYGtCW",
-	"/7uECnjtsWxxgQT9y4kgEuu0D6yN+eykYO1syvE34Rwa+Kveoas30Opt3AfBAvq+AsKvURMqaO73UT28",
-	"VHLtI0pOpaaCGWmdLx/1JJeCFtou0npzs3XOoLDpqsEVmsGvl4YOMJS4apftFI5PaJGEOcaARI7SQuFc",
-	"RMPQMEWsAG3soLlPm12+AbouDGEHplQ5c5v0+98pPAG9gu//uC5J53ldKh12U/CU/HvZTnW1p81Ra0LK",
-	"SEKu96ZEudga3I2JjV1bpkQoRRjCya5aFLQR6g2ZjGDNsTDwlnBnF78S78mttMKs2kYmWPgAFVjkb46e",
-	"BlwNhPGYGH5DhcP52nYzRFrt2N2m3rE0gHhKtTuvBONpzdril9dMObRVX+2G+Khr87suP0CdjrSdu2xb",
-	"Z1lITksruhR14+ZmikI6CxVEMtDAktmHpq7bfDwmNzf4FHA9ppifJM1m/+b56OrLDCpYIYUMGM7Gk/Ek",
-	"BTuPVngNDVyMJ+P0xnnBy8xXHTOZtbYLDBmSd+WbWM0tzRQ0MMv/C/NQ9MXAU6fW247Q5mvCe6MLF/Vj",
-	"KMQVkl6jcCBrvz9D2efpIHhnQxH6fDIpr06QpH2RCG6jlMmCfQWX5f8fQbZ9/DKs/YpToUY3hYxS9ew9",
-	"qt5ZEXnpSP9AVcpevEfZa0etVgrzA/7v+xA8s4xkhRndIq2QRh+zVVNciF0nktU3wzkqAxRKlpDDAzT3",
-	"h0NSbFJcVq/OoH/ofwYAAP//NXPbQFcIAAA=",
+	"H4sIAAAAAAAC/7xUTW8TMRD9K9HAccmmH3DYWwMUReKAWvVU9TDxThIXr23G44hQ7X9HtpPmU2qFUE9r",
+	"e8cz77154ydQrvPOkpUAzRMEtaAO8/JKKRet3ApKzAeenScWTXmnbdAtXZNV671Qlxczxx0KNKCtfLqE",
+	"CmTlqWxpTgz98wky4yrtg2hjvjuFop1NOd4zzaCBd/UWXb2GVm/ivqAg9H0FTL+iZmqhud9H9fBcyU0f",
+	"SUkqNUYR4lW+fMRJLZDn2s7Ten1z6pwhtOmqoSWZnV/PhA4wlLhqm+0Ujm9kidEcYyBmx2nR0gyjEWiE",
+	"I1VANnbQ3KfNNt8Oui7swg7CqXLWNvXvs2vpBPQKfn9wXWqdl1WpdMim4Cn597KdYrXXmyNqqFRkVKs9",
+	"l7QuTg1tbWJjNy0uwbZlCuEkK4OiJRZOr0hlnJ2/Pv6wn5tau3mqLZtTQtz5FoVOyzAtFnzJ57tO7aut",
+	"L461+NfBOUCdjrSduTwJzgoqSUuLXYq6cTMzJlTOQgWRDTSwEPGhqetpPh6ymxn6GWg15JinXIvZv3k+",
+	"uPoxgQqWxCEDhrPhaDhKwc6TRa+hgYvhaJieDY+yyHrVMYtZazunkCF5V75J1Uxp0kIDk/y/KA+lhRRk",
+	"7NrVhhHZfA29N7poUT+GIlwR6SUJd9ra79skj046CN7ZUBp9PhqVQQ6KtS8tgtuoVHJ1X8Fl+f9fkG3e",
+	"kwxrv+IY28FNEaNUPXuLqncWoywc6z/UlrIXb1H22vFUty3lN/Hj2wg8sUJs0QxuiZfEg695VFNciF2H",
+	"adTX5hwUA4WSJeTwAM39oUnKmJQpq5dn0D/0fwMAAP//c0Jy4KoHAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

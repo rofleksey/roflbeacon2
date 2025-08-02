@@ -96,26 +96,12 @@ components:
         accuracy:
           type: number
           format: double
-        speed:
-          type: number
-          format: double
-        bearing:
-          type: number
-          format: double
-        provider:
-          type: string
-          enum:
-            - gps
-            - network
         address:
           type: string
       required:
         - 'latitude'
         - 'longitude'
         - 'accuracy'
-        - 'speed'
-        - 'bearing'
-        - 'provider'
       type: 'object'
     AccountStatus:
       properties:
