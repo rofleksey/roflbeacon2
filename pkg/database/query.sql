@@ -59,14 +59,6 @@ INSERT INTO fence (name, longitude, latitude, radius)
 VALUES ($1, $2, $3, $4)
 RETURNING id;
 
--- name: UpdateFence :exec
-UPDATE fence
-SET name      = $2,
-    longitude = $3,
-    latitude  = $4,
-    radius    = $5
-WHERE id = $1;
-
 -- name: DeleteFence :exec
 DELETE
 FROM fence

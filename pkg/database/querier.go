@@ -99,15 +99,6 @@ type Querier interface {
 	//  SET status = $2
 	//  WHERE id = $1
 	UpdateAccountStatus(ctx context.Context, arg UpdateAccountStatusParams) error
-	//UpdateFence
-	//
-	//  UPDATE fence
-	//  SET name      = $2,
-	//      longitude = $3,
-	//      latitude  = $4,
-	//      radius    = $5
-	//  WHERE id = $1
-	UpdateFence(ctx context.Context, arg UpdateFenceParams) error
 }
 
 var _ Querier = (*Queries)(nil)

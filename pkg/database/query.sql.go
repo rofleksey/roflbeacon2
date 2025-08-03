@@ -416,39 +416,3 @@ func (q *Queries) UpdateAccountStatus(ctx context.Context, arg UpdateAccountStat
 	_, err := q.db.Exec(ctx, updateAccountStatus, arg.ID, arg.Status)
 	return err
 }
-
-const updateFence = `-- name: UpdateFence :exec
-UPDATE fence
-SET name      = $2,
-    longitude = $3,
-    latitude  = $4,
-    radius    = $5
-WHERE id = $1
-`
-
-type UpdateFenceParams struct {
-	ID        int64
-	Name      string
-	Longitude float64
-	Latitude  float64
-	Radius    float64
-}
-
-// UpdateFence
-//
-//	UPDATE fence
-//	SET name      = $2,
-//	    longitude = $3,
-//	    latitude  = $4,
-//	    radius    = $5
-//	WHERE id = $1
-func (q *Queries) UpdateFence(ctx context.Context, arg UpdateFenceParams) error {
-	_, err := q.db.Exec(ctx, updateFence,
-		arg.ID,
-		arg.Name,
-		arg.Longitude,
-		arg.Latitude,
-		arg.Radius,
-	)
-	return err
-}

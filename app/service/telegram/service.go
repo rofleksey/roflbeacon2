@@ -10,12 +10,16 @@ import (
 	"roflbeacon2/pkg/config"
 	"roflbeacon2/pkg/database"
 	"roflbeacon2/pkg/util"
+	"sync"
 )
 
 type Service struct {
 	tgBot   *bot.Bot
 	cfg     *config.Config
 	queries *database.Queries
+
+	m     sync.Mutex
+	state BotState
 }
 
 func New(di *do.Injector) (*Service, error) {
@@ -24,6 +28,9 @@ func New(di *do.Injector) (*Service, error) {
 	service := &Service{
 		cfg:     cfg,
 		queries: do.MustInvoke[*database.Queries](di),
+		state: BotState{
+			Stage: "idle",
+		},
 	}
 
 	opts := []bot.Option{
@@ -66,6 +73,18 @@ func (s *Service) initCommands(ctx context.Context) {
 		{
 			Command:     "/history",
 			Description: "История",
+		},
+		{
+			Command:     "/addfence",
+			Description: "Добавить ограду",
+		},
+		{
+			Command:     "/deletefence",
+			Description: "Удалить ограду",
+		},
+		{
+			Command:     "/cancel",
+			Description: "Отменить текущее действие",
 		},
 	}
 

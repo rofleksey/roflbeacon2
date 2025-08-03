@@ -8,6 +8,12 @@ import (
 	"strings"
 )
 
+func (s *Service) resetState() {
+	s.state = BotState{
+		Stage: "idle",
+	}
+}
+
 func (s *Service) formatUpdate(acc *database.Account, lastUpdate database.Update, myLastLocation *api.LocationData) string {
 	var builder strings.Builder
 

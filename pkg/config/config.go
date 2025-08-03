@@ -18,7 +18,7 @@ type Config struct {
 
 	Telegram struct {
 		Token       string `yaml:"token" validate:"required"`
-		AdminChatID string `yaml:"adminChatID" validate:"required"`
+		AdminChatID int64  `yaml:"adminChatID" validate:"required"`
 	} `yaml:"telegram"`
 
 	DB struct {

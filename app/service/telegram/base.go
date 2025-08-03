@@ -34,6 +34,14 @@ func (s *Service) handleMessage(ctx context.Context, msg *models.Message) {
 		s.handleList(ctx, &acc)
 	case "/history":
 		s.handleHistory(ctx, &acc)
+	case "/deletefence":
+		s.handleDeleteFence(ctx, &acc)
+	case "/addfence":
+		s.handleAddFence(ctx, &acc)
+	case "/cancel":
+		s.handleCancel(ctx, &acc)
+	default:
+		s.handleUnknownMessage(ctx, &acc, msg.Text)
 	}
 }
 
@@ -60,6 +68,13 @@ func (s *Service) handleCallbackQuery(ctx context.Context, query *models.Callbac
 		_ = json.Unmarshal([]byte(query.Data), &historyDTO)
 
 		s.handleHistoryCallback(ctx, &acc, historyDTO, query)
+	case "delete_fence":
+		var fenceDTO DeleteFenceCallbackDTO
+		_ = json.Unmarshal([]byte(query.Data), &fenceDTO)
+
+		s.handleDeleteFenceCallback(ctx, &acc, fenceDTO, query)
+	case "cancel":
+		s.handleCancelCallback(ctx, &acc, query)
 	default:
 		slog.ErrorContext(ctx, "Unknown callback type",
 			slog.String("type", genericDTO.Type),
