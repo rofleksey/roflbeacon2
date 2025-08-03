@@ -38,13 +38,13 @@ func New(di *do.Injector) (*Service, error) {
 
 func (s *Service) alertFenceMovement(acc *database.Account, enteredFences mapset.Set[database.Fence], leftFences mapset.Set[database.Fence]) {
 	for fence := range leftFences.Iter() {
-		ruText := fmt.Sprintf("%s вышел из %s", acc.Name, fence.Name)
+		ruText := fmt.Sprintf("🔴 %s покинул %s", acc.Name, fence.Name)
 
 		s.alertService.Alert(ruText, acc.ChatID)
 	}
 
 	for fence := range enteredFences.Iter() {
-		ruText := fmt.Sprintf("%s вошел в %s", acc.Name, fence.Name)
+		ruText := fmt.Sprintf("🟢 %s вошел в %s", acc.Name, fence.Name)
 
 		s.alertService.Alert(ruText, acc.ChatID)
 	}
@@ -72,7 +72,7 @@ func (s *Service) handleStillLocation(ctx context.Context, acc *database.Account
 
 		acc.Status.StillLocation = nil
 
-		ruText := fmt.Sprintf("%s снова начал двигаться", acc.Name)
+		ruText := fmt.Sprintf("▶️ %s снова начал двигаться", acc.Name)
 		s.alertService.Alert(ruText, acc.ChatID)
 
 		return nil
@@ -108,7 +108,7 @@ func (s *Service) handleStillLocation(ctx context.Context, acc *database.Account
 
 	acc.Status.StillLocation = &newLocation
 
-	ruText := fmt.Sprintf("%s остановился", acc.Name)
+	ruText := fmt.Sprintf("⏸️ %s остановился", acc.Name)
 	s.alertService.Alert(ruText, acc.ChatID)
 
 	return nil

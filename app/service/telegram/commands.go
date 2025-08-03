@@ -112,7 +112,7 @@ func (s *Service) handleHistory(ctx context.Context, selfAcc *database.Account) 
 }
 
 func (s *Service) handleCancel(ctx context.Context, selfAcc *database.Account) {
-	if selfAcc.ChatID != &s.cfg.Telegram.AdminChatID {
+	if *selfAcc.ChatID != s.cfg.Telegram.AdminChatID {
 		s.SendMessage(ctx, *selfAcc.ChatID, "Вы не можете использовать данную команду")
 		return
 	}
