@@ -11,7 +11,7 @@ import (
 
 func (s *Service) handleHistoryCallback(ctx context.Context, acc *database.Account, dto HistoryCallbackDTO, query *models.CallbackQuery) {
 	if _, err := s.tgBot.DeleteMessage(ctx, &bot.DeleteMessageParams{
-		ChatID:    query.Message.Message.Chat.ID,
+		ChatID:    acc.ChatID,
 		MessageID: query.Message.Message.ID,
 	}); err != nil {
 		slog.ErrorContext(ctx, "Failed to delete message",

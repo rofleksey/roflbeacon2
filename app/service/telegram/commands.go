@@ -87,7 +87,7 @@ func (s *Service) handleHistory(ctx context.Context, selfAcc *database.Account) 
 	}
 
 	if _, err = s.tgBot.SendMessage(ctx, &bot.SendMessageParams{
-		ChatID: selfAcc.ID,
+		ChatID: selfAcc.ChatID,
 		Text:   "Выберите пользователя",
 		ReplyMarkup: models.InlineKeyboardMarkup{
 			InlineKeyboard: [][]models.InlineKeyboardButton{buttons},
