@@ -55,7 +55,7 @@ func (s *Service) handleList(ctx context.Context, selfAcc *database.Account) {
 			continue
 		}
 
-		result = append(result, s.formatUpdate(selfAcc, lastUpdates[0], myLastLocation))
+		result = append(result, s.formatUpdate(&acc, lastUpdates[0], myLastLocation))
 	}
 
 	s.SendMessage(ctx, *selfAcc.ChatID, strings.Join(result, "\n\n"))
