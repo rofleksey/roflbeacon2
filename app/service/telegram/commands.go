@@ -126,7 +126,7 @@ func (s *Service) handleCancel(ctx context.Context, selfAcc *database.Account) {
 }
 
 func (s *Service) handleAddFence(ctx context.Context, selfAcc *database.Account) {
-	if selfAcc.ChatID != &s.cfg.Telegram.AdminChatID {
+	if *selfAcc.ChatID != s.cfg.Telegram.AdminChatID {
 		s.SendMessage(ctx, *selfAcc.ChatID, "Вы не можете использовать данную команду")
 		return
 	}
@@ -141,6 +141,11 @@ func (s *Service) handleAddFence(ctx context.Context, selfAcc *database.Account)
 }
 
 func (s *Service) handleDeleteFence(ctx context.Context, selfAcc *database.Account) {
+	if *selfAcc.ChatID != s.cfg.Telegram.AdminChatID {
+		s.SendMessage(ctx, *selfAcc.ChatID, "Вы не можете использовать данную команду")
+		return
+	}
+
 	fences, err := s.queries.GetAllFences(ctx)
 	if err != nil {
 		slog.ErrorContext(ctx, "Failed to get all fences",
@@ -193,7 +198,7 @@ func (s *Service) handleUnknownMessage(ctx context.Context, selfAcc *database.Ac
 	s.m.Lock()
 	defer s.m.Unlock()
 
-	if s.state.Stage == "idle" || selfAcc.ChatID != &s.cfg.Telegram.AdminChatID {
+	if s.state.Stage == "idle" || *selfAcc.ChatID != s.cfg.Telegram.AdminChatID {
 		s.SendMessage(ctx, *selfAcc.ChatID, "Неизвестная команда")
 		return
 	}
