@@ -325,6 +325,46 @@ func (q *Queries) GetLastUpdateByAccountID(ctx context.Context, accountID int64)
 	return items, nil
 }
 
+const getLatestUpdatesByAccountID = `-- name: GetLatestUpdatesByAccountID :many
+SELECT id, account_id, created, data
+FROM updates
+WHERE account_id = $1
+ORDER BY id DESC
+LIMIT 10
+`
+
+// GetLatestUpdatesByAccountID
+//
+//	SELECT id, account_id, created, data
+//	FROM updates
+//	WHERE account_id = $1
+//	ORDER BY id DESC
+//	LIMIT 10
+func (q *Queries) GetLatestUpdatesByAccountID(ctx context.Context, accountID int64) ([]Update, error) {
+	rows, err := q.db.Query(ctx, getLatestUpdatesByAccountID, accountID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Update{}
+	for rows.Next() {
+		var i Update
+		if err := rows.Scan(
+			&i.ID,
+			&i.AccountID,
+			&i.Created,
+			&i.Data,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getMigrations = `-- name: GetMigrations :many
 SELECT id, applied
 FROM migration

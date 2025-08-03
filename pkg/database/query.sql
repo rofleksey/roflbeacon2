@@ -38,6 +38,13 @@ WHERE account_id = $1
 ORDER BY id DESC
 LIMIT 1;
 
+-- name: GetLatestUpdatesByAccountID :many
+SELECT *
+FROM updates
+WHERE account_id = $1
+ORDER BY id DESC
+LIMIT 10;
+
 -- name: CreateUpdate :one
 INSERT INTO updates (account_id, created, data)
 VALUES ($1, $2, $3)

@@ -79,6 +79,14 @@ type Querier interface {
 	//  ORDER BY id DESC
 	//  LIMIT 1
 	GetLastUpdateByAccountID(ctx context.Context, accountID int64) ([]Update, error)
+	//GetLatestUpdatesByAccountID
+	//
+	//  SELECT id, account_id, created, data
+	//  FROM updates
+	//  WHERE account_id = $1
+	//  ORDER BY id DESC
+	//  LIMIT 10
+	GetLatestUpdatesByAccountID(ctx context.Context, accountID int64) ([]Update, error)
 	//GetMigrations
 	//
 	//  SELECT id, applied

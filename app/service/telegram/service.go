@@ -10,7 +10,6 @@ import (
 	"roflbeacon2/pkg/config"
 	"roflbeacon2/pkg/database"
 	"roflbeacon2/pkg/util"
-	"strings"
 )
 
 type Service struct {
@@ -41,120 +40,6 @@ func New(di *do.Injector) (*Service, error) {
 	return service, nil
 }
 
-func (s *Service) handleUpdates(ctx context.Context, b *bot.Bot, update *models.Update) {
-	if update.Message != nil {
-		s.handleMessage(ctx, b, update.Message)
-	}
-}
-
-func (s *Service) handleMessage(ctx context.Context, b *bot.Bot, msg *models.Message) {
-	acc, err := s.queries.GetAccountByChatID(ctx, &msg.Chat.ID)
-	if err != nil {
-		return
-	}
-
-	if acc.ChatID == nil {
-		return
-	}
-
-	switch strings.TrimSpace(msg.Text) {
-	case "/list":
-		s.handleList(ctx, &acc)
-	}
-}
-
-func (s *Service) handleList(ctx context.Context, selfAcc *database.Account) {
-	accounts, err := s.queries.GetAllAccounts(ctx)
-	if err != nil {
-		slog.ErrorContext(ctx, "Failed to get all accounts",
-			slog.Any("error", err),
-		)
-		return
-	}
-
-	myLastUpdates, err := s.queries.GetLastUpdateByAccountID(ctx, selfAcc.ID)
-	if err != nil {
-		slog.ErrorContext(ctx, "Failed to get last update",
-			slog.Any("error", err),
-		)
-		return
-	}
-
-	if len(myLastUpdates) == 0 {
-		slog.ErrorContext(ctx, "Myself doesn't have any updates")
-		return
-	}
-
-	myLastUpdate := myLastUpdates[0]
-	myLastLocation := myLastUpdate.Data.Location
-
-	var builder strings.Builder
-
-	for _, acc := range accounts {
-		if acc.ID == selfAcc.ID {
-			continue
-		}
-
-		// TODO: improve this
-		lastUpdates, err := s.queries.GetLastUpdateByAccountID(ctx, acc.ID)
-		if err != nil {
-			slog.ErrorContext(ctx, "Failed to get last update",
-				slog.Any("error", err),
-			)
-			return
-		}
-
-		if len(lastUpdates) == 0 {
-			continue
-		}
-
-		lastUpdate := lastUpdates[0]
-		loc := lastUpdate.Data.Location
-
-		builder.WriteString("*")
-		builder.WriteString(acc.Name)
-		builder.WriteString("* (")
-		builder.WriteString(util.TimeAgo(lastUpdate.Created))
-		builder.WriteString(")\n")
-
-		if loc == nil {
-			builder.WriteString("⚠️ Местоположение не определено")
-		} else {
-			mapLink := util.GenerateYandexLinkForPoint(loc.Latitude, loc.Longitude)
-
-			builder.WriteString(fmt.Sprintf("[На карте](%s)", mapLink))
-			if myLastLocation != nil {
-				routeLink := util.GenerateYandexLinkForRoute(myLastLocation.Latitude, myLastLocation.Longitude, loc.Latitude, loc.Longitude, "mt")
-				builder.WriteString(fmt.Sprintf(" | [Маршрут до меня](%s)", routeLink))
-			}
-
-			builder.WriteString("\n")
-
-			if loc.Address != nil {
-				builder.WriteString(fmt.Sprintf("📍 %s\n", *loc.Address))
-			} else {
-				builder.WriteString("📍 Адрес не определен\n")
-			}
-		}
-
-		if lastUpdate.Data.Battery != nil {
-			if lastUpdate.Data.Battery.Charging {
-				builder.WriteString("⚡")
-			} else if lastUpdate.Data.Battery.Level > 30 {
-				builder.WriteString("🔋")
-			} else {
-				builder.WriteString("🪫")
-			}
-
-			builder.WriteString(fmt.Sprintf(" %d%%\n", lastUpdate.Data.Battery.Level))
-		}
-
-		builder.WriteString("\n\n")
-	}
-
-	s.SendMessage(ctx, *selfAcc.ChatID, builder.String())
-}
-
 func (s *Service) SendMessage(ctx context.Context, chatID int64, text string) {
 	if _, err := s.tgBot.SendMessage(ctx, &bot.SendMessageParams{
 		ChatID:    chatID,
@@ -177,6 +62,10 @@ func (s *Service) initCommands(ctx context.Context) {
 		{
 			Command:     "/list",
 			Description: "Показать всех",
+		},
+		{
+			Command:     "/history",
+			Description: "История",
 		},
 	}
 
