@@ -17,7 +17,6 @@ import (
 	"time"
 )
 
-const maxGoodAccuracy = 100
 const standByRadius = 200
 
 type Service struct {
@@ -64,7 +63,7 @@ func (s *Service) handleStillLocation(ctx context.Context, acc *database.Account
 		newLon := newLocation.Longitude
 
 		dist := util.HaversineDistance(oldLat, oldLon, newLat, newLon)
-		actualDist := dist + newLocation.Accuracy
+		actualDist := dist - newLocation.Accuracy
 
 		if actualDist <= standByRadius {
 			return nil
@@ -114,7 +113,7 @@ func (s *Service) handleStillLocation(ctx context.Context, acc *database.Account
 	return nil
 }
 
-func (s *Service) handleGoodLocation(ctx context.Context, data api.LocationData) error {
+func (s *Service) handleNewLocation(ctx context.Context, data api.LocationData) error {
 	acc := s.accountService.ExtractCtxAccount(ctx)
 	if acc == nil {
 		return fmt.Errorf("no account in context")
@@ -169,8 +168,8 @@ func (s *Service) Ingest(ctx context.Context, data api.UpdateData) error {
 		return fmt.Errorf("no account in context")
 	}
 
-	if data.Location != nil && data.Location.Accuracy < maxGoodAccuracy {
-		if err := s.handleGoodLocation(ctx, *data.Location); err != nil {
+	if data.Location != nil {
+		if err := s.handleNewLocation(ctx, *data.Location); err != nil {
 			slog.WarnContext(ctx, "Failed to handle location",
 				slog.Any("error", err),
 			)
