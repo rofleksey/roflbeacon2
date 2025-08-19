@@ -35,7 +35,11 @@ func (s *Service) Alert(text string, ignoreChatID *int64) {
 	}
 
 	for _, account := range accounts {
-		if account.ChatID == nil || account.ChatID == ignoreChatID {
+		if account.ChatID == nil {
+			continue
+		}
+
+		if ignoreChatID != nil && *account.ChatID == *ignoreChatID {
 			continue
 		}
 
