@@ -4,9 +4,6 @@ import (
 	"context"
 	_ "embed"
 	"fmt"
-	mapset "github.com/deckarep/golang-set/v2"
-	"github.com/elliotchance/pie/v2"
-	"github.com/samber/do"
 	"log/slog"
 	"roflbeacon2/app/api"
 	"roflbeacon2/app/service/account"
@@ -15,6 +12,10 @@ import (
 	"roflbeacon2/pkg/database"
 	"roflbeacon2/pkg/util"
 	"time"
+
+	mapset "github.com/deckarep/golang-set/v2"
+	"github.com/elliotchance/pie/v2"
+	"github.com/samber/do"
 )
 
 const standByRadius = 200
@@ -152,13 +153,6 @@ func (s *Service) handleNewLocation(ctx context.Context, data api.LocationData) 
 		)
 	}
 
-	if err = s.queries.UpdateAccountStatus(ctx, database.UpdateAccountStatusParams{
-		ID:     acc.ID,
-		Status: acc.Status,
-	}); err != nil {
-		return fmt.Errorf("update account status: %w", err)
-	}
-
 	return nil
 }
 
@@ -174,6 +168,15 @@ func (s *Service) Ingest(ctx context.Context, data api.UpdateData) error {
 				slog.Any("error", err),
 			)
 		}
+	}
+
+	acc.Status.Offline = false
+
+	if err := s.queries.UpdateAccountStatus(ctx, database.UpdateAccountStatusParams{
+		ID:     acc.ID,
+		Status: acc.Status,
+	}); err != nil {
+		return fmt.Errorf("update account status: %w", err)
 	}
 
 	_, err := s.queries.CreateUpdate(ctx, database.CreateUpdateParams{

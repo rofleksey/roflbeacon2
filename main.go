@@ -3,12 +3,6 @@ package main
 
 import (
 	"context"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/log"
-	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/samber/do"
-	_ "go.uber.org/automaxprocs"
 	"log/slog"
 	"net/http"
 	"os"
@@ -19,6 +13,7 @@ import (
 	"roflbeacon2/app/service/alert"
 	"roflbeacon2/app/service/ingest"
 	"roflbeacon2/app/service/limits"
+	"roflbeacon2/app/service/offline"
 	"roflbeacon2/app/service/telegram"
 	"roflbeacon2/pkg/config"
 	"roflbeacon2/pkg/database"
@@ -27,6 +22,13 @@ import (
 	"roflbeacon2/pkg/routes"
 	"roflbeacon2/pkg/tlog"
 	"time"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/samber/do"
+	_ "go.uber.org/automaxprocs"
 )
 
 func main() {
@@ -85,8 +87,10 @@ func main() {
 	do.Provide(di, alert.New)
 	do.Provide(di, limits.New)
 	do.Provide(di, ingest.New)
+	do.Provide(di, offline.New)
 
 	go do.MustInvoke[*telegram.Service](di).Run(appCtx)
+	go do.MustInvoke[*offline.Service](di).RunBackgroundChecks(appCtx)
 
 	server := controller.NewStrictServer(di)
 	handler := api.NewStrictHandler(server, nil)

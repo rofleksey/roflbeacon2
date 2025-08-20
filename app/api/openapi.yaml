@@ -112,6 +112,9 @@ components:
             format: int64
         stillLocation:
           $ref: '#/components/schemas/LocationData'
+        offline:
+          type: boolean
       required:
         - 'insideFences'
+        - 'offline'
       type: 'object'
