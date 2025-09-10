@@ -2,11 +2,12 @@ package telegram
 
 import (
 	"context"
-	"github.com/go-telegram/bot"
-	"github.com/go-telegram/bot/models"
 	"log/slog"
 	"roflbeacon2/pkg/database"
 	"strings"
+
+	"github.com/go-telegram/bot"
+	"github.com/go-telegram/bot/models"
 )
 
 func (s *Service) handleCancelCallback(ctx context.Context, acc *database.Account, query *models.CallbackQuery) {

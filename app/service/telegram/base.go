@@ -3,10 +3,11 @@ package telegram
 import (
 	"context"
 	"encoding/json"
-	"github.com/go-telegram/bot"
-	"github.com/go-telegram/bot/models"
 	"log/slog"
 	"strings"
+
+	"github.com/go-telegram/bot"
+	"github.com/go-telegram/bot/models"
 )
 
 func (s *Service) handleUpdates(ctx context.Context, _ *bot.Bot, update *models.Update) {

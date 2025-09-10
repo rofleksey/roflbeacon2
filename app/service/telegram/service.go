@@ -3,14 +3,15 @@ package telegram
 import (
 	"context"
 	"fmt"
-	"github.com/go-telegram/bot"
-	"github.com/go-telegram/bot/models"
-	"github.com/samber/do"
 	"log/slog"
 	"roflbeacon2/pkg/config"
 	"roflbeacon2/pkg/database"
 	"roflbeacon2/pkg/util"
 	"sync"
+
+	"github.com/go-telegram/bot"
+	"github.com/go-telegram/bot/models"
+	"github.com/samber/do"
 )
 
 type Service struct {

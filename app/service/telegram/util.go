@@ -38,6 +38,12 @@ func (s *Service) formatUpdate(acc *database.Account, lastUpdate database.Update
 
 		builder.WriteString("\n")
 
+		if myLastLocation != nil {
+			distToMe := util.HaversineDistance(myLastLocation.Latitude, myLastLocation.Longitude, loc.Latitude, loc.Longitude)
+			builder.WriteString(fmt.Sprintf("📏 %0.f м | ", distToMe))
+		}
+		builder.WriteString(fmt.Sprintf("±%0.f м\n", loc.Accuracy))
+
 		if loc.Address != nil {
 			builder.WriteString(fmt.Sprintf("📍 %s\n", *loc.Address))
 		} else {

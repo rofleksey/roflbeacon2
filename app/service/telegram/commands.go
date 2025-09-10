@@ -3,12 +3,13 @@ package telegram
 import (
 	"context"
 	"encoding/json"
-	"github.com/go-telegram/bot"
-	"github.com/go-telegram/bot/models"
 	"log/slog"
 	"roflbeacon2/pkg/database"
 	"strconv"
 	"strings"
+
+	"github.com/go-telegram/bot"
+	"github.com/go-telegram/bot/models"
 )
 
 func (s *Service) handleList(ctx context.Context, selfAcc *database.Account) {
