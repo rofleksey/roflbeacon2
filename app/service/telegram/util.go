@@ -42,7 +42,7 @@ func (s *Service) formatUpdate(acc *database.Account, lastUpdate database.Update
 			distToMe := util.HaversineDistance(myLastLocation.Latitude, myLastLocation.Longitude, loc.Latitude, loc.Longitude)
 
 			if distToMe >= 1000 {
-				builder.WriteString(fmt.Sprintf("📐 %.1f км | ", distToMe))
+				builder.WriteString(fmt.Sprintf("📐 %.1f км | ", distToMe/1000))
 			} else {
 				builder.WriteString(fmt.Sprintf("📐 %.0f м | ", distToMe))
 			}
