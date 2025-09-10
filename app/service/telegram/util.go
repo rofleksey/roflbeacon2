@@ -47,7 +47,7 @@ func (s *Service) formatUpdate(acc *database.Account, lastUpdate database.Update
 				builder.WriteString(fmt.Sprintf("📐 %.0f м | ", distToMe))
 			}
 		}
-		builder.WriteString(fmt.Sprintf("±%0.f м\n", loc.Accuracy))
+		builder.WriteString(fmt.Sprintf("±%.0f м\n", loc.Accuracy))
 
 		if loc.Address != nil {
 			builder.WriteString(fmt.Sprintf("📍 %s\n", *loc.Address))
