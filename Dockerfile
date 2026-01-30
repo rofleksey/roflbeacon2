@@ -12,5 +12,4 @@ WORKDIR /opt
 RUN apk update && apk add --no-cache curl ca-certificates
 COPY --from=apiBuilder /opt/roflbeacon2 /opt/roflbeacon2
 EXPOSE 8080
-RUN ulimit -n 100000
 CMD [ "./roflbeacon2" ]
