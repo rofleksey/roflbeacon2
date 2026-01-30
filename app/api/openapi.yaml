@@ -68,22 +68,8 @@ components:
       type: 'object'
     UpdateData:
       properties:
-        battery:
-          $ref: '#/components/schemas/BatteryData'
         location:
           $ref: '#/components/schemas/LocationData'
-        error:
-          type: string
-      type: 'object'
-    BatteryData:
-      properties:
-        level:
-          type: integer
-        charging:
-          type: boolean
-      required:
-        - 'level'
-        - 'charging'
       type: 'object'
     LocationData:
       properties:
@@ -110,8 +96,6 @@ components:
           items:
             type: integer
             format: int64
-        stillLocation:
-          $ref: '#/components/schemas/LocationData'
         offline:
           type: boolean
       required:

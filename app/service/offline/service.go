@@ -12,7 +12,7 @@ import (
 	"github.com/samber/do"
 )
 
-const offlineThresholdHours = 3.0
+const offlineThresholdMinutes = 30
 
 type Service struct {
 	cfg          *config.Config
@@ -65,7 +65,7 @@ func (s *Service) CheckOfflineAccounts(ctx context.Context) {
 		}
 
 		lastUpdate := lastUpdates[0]
-		if time.Since(lastUpdate.Created).Hours() < offlineThresholdHours {
+		if time.Since(lastUpdate.Created).Minutes() < offlineThresholdMinutes {
 			continue
 		}
 

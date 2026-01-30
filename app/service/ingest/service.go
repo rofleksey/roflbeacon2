@@ -10,7 +10,6 @@ import (
 	"roflbeacon2/app/service/alert"
 	"roflbeacon2/pkg/config"
 	"roflbeacon2/pkg/database"
-	"roflbeacon2/pkg/util"
 	"time"
 
 	mapset "github.com/deckarep/golang-set/v2"
@@ -50,70 +49,6 @@ func (s *Service) alertFenceMovement(acc *database.Account, enteredFences mapset
 	}
 }
 
-func (s *Service) handleStillLocation(ctx context.Context, acc *database.Account, newLocation api.LocationData, wasInsideFences bool) error {
-	if len(acc.Status.InsideFences) > 0 || wasInsideFences {
-		acc.Status.StillLocation = nil
-
-		return nil
-	}
-
-	if acc.Status.StillLocation != nil {
-		oldLat := acc.Status.StillLocation.Latitude
-		oldLon := acc.Status.StillLocation.Longitude
-		newLat := newLocation.Latitude
-		newLon := newLocation.Longitude
-
-		dist := util.HaversineDistance(oldLat, oldLon, newLat, newLon)
-		actualDist := dist - newLocation.Accuracy
-
-		if actualDist <= standByRadius {
-			return nil
-		}
-
-		acc.Status.StillLocation = nil
-
-		ruText := fmt.Sprintf("▶️ %s снова начал двигаться", acc.Name)
-		s.alertService.Alert(ruText, acc.ChatID)
-
-		return nil
-	}
-
-	lastUpdates, err := s.queries.GetLastUpdateByAccountID(ctx, acc.ID)
-	if err != nil {
-		return fmt.Errorf("get last updates: %w", err)
-	}
-
-	if len(lastUpdates) == 0 {
-		return nil
-	}
-
-	lastUpdate := lastUpdates[0]
-	lastLocation := lastUpdate.Data.Location
-
-	if lastLocation == nil {
-		return nil
-	}
-
-	oldLat := lastLocation.Latitude
-	oldLon := lastLocation.Longitude
-	newLat := newLocation.Latitude
-	newLon := newLocation.Longitude
-
-	dist := util.HaversineDistance(oldLat, oldLon, newLat, newLon)
-	actualDist := dist + newLocation.Accuracy
-
-	if actualDist > standByRadius {
-		return nil
-	}
-
-	acc.Status.StillLocation = &newLocation
-
-	ruText := fmt.Sprintf("⏸️ %s остановился", acc.Name)
-	s.alertService.Alert(ruText, acc.ChatID)
-
-	return nil
-}
-
 func (s *Service) handleNewLocation(ctx context.Context, data api.LocationData) error {
 	acc := s.accountService.ExtractCtxAccount(ctx)
 	if acc == nil {
@@ -139,19 +74,12 @@ func (s *Service) handleNewLocation(ctx context.Context, data api.LocationData) 
 
 	leftFences := oldFences.Difference(newFences)
 	enteredFences := newFences.Difference(oldFences)
-	wasInsideFences := leftFences.Cardinality() > 0
 
 	acc.Status.InsideFences = pie.Map(newFences.ToSlice(), func(f database.Fence) int64 {
 		return f.ID
 	})
 
 	s.alertFenceMovement(acc, enteredFences, leftFences)
-
-	if err = s.handleStillLocation(ctx, acc, data, wasInsideFences); err != nil {
-		slog.ErrorContext(ctx, "Failed to handle still location",
-			slog.Any("error", err),
-		)
-	}
 
 	return nil
 }

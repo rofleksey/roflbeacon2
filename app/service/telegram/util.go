@@ -56,17 +56,5 @@ func (s *Service) formatUpdate(acc *database.Account, lastUpdate database.Update
 		}
 	}
 
-	if lastUpdate.Data.Battery != nil {
-		if lastUpdate.Data.Battery.Charging {
-			builder.WriteString("⚡")
-		} else if lastUpdate.Data.Battery.Level > 30 {
-			builder.WriteString("🔋")
-		} else {
-			builder.WriteString("🪫")
-		}
-
-		builder.WriteString(fmt.Sprintf(" %d%%\n", lastUpdate.Data.Battery.Level))
-	}
-
 	return builder.String()
 }

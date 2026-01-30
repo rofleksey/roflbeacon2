@@ -24,15 +24,8 @@ const (
 
 // AccountStatus defines model for AccountStatus.
 type AccountStatus struct {
-	InsideFences  []int64       `json:"insideFences"`
-	Offline       bool          `json:"offline"`
-	StillLocation *LocationData `json:"stillLocation,omitempty"`
-}
-
-// BatteryData defines model for BatteryData.
-type BatteryData struct {
-	Charging bool `json:"charging"`
-	Level    int  `json:"level"`
+	InsideFences []int64 `json:"insideFences"`
+	Offline      bool    `json:"offline"`
 }
 
 // General defines model for General.
@@ -55,8 +48,6 @@ type LocationData struct {
 
 // UpdateData defines model for UpdateData.
 type UpdateData struct {
-	Battery  *BatteryData  `json:"battery,omitempty"`
-	Error    *string       `json:"error,omitempty"`
 	Location *LocationData `json:"location,omitempty"`
 }
 
@@ -214,17 +205,16 @@ func (sh *strictHandler) IngestUpdate(ctx *fiber.Ctx) error {
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/7xUTW8TMRD9K9HAccmmH3DYWwMUReKAWvVU9eDYs4mL1zbjcUSo9r8j20nztVIrhHpa",
-	"f8zOvPfmjZ9Aus47i5YDNE8Q5BI7kZdXUrpo+ZYFx3zgyXkk1ph32gat8Bqt3OwZu7xoHXWCoQFt+dMl",
-	"VMBrj2WLCyTon08EkVinvWtboy2mvzdXc+cMCpsuA2tjvjspWDubQt4TttDAu3oHvd7grrdxXwQL6PsK",
-	"CH9FTaiguT+EvKv68AzIzR9Rcio6FcxI65zmhLpcClpouxjGa3CFZu/qmfcRmhJX7bIN4fiGFkmYUwxI",
-	"5CgtFLYiGoaGKWIFaGMHzX3a7PLtoevCPuzAlCpnlVObPzuFA9Ar+P3BdanDntel0jGbgqfkP8g2xOqg",
-	"SyfUhJSRhFwfmEm5ODe4c5ON3byYSShFGMIgKyNYcyycXpHKOLt4ffxxP7e19vNUOzZDQtx5JRiHZZgX",
-	"C77k+H2n9tXOF6da/OsIHaFOR9q2Lk+Csywkp6UVXYq6ca2ZopDOQgWRDDSwZPahqet5Ph6Taw3+DLge",
-	"U8yPgWZz+Of56OrHDCpYIYUMGM7Gk/EkvxQerfAaGrgYT8bpdfGCl1mvOmYxa20XGDIk78o3qZopzRQ0",
-	"MMv3RXkoLcTAU6fWW0Zo82/Ce6OLFvVjKMIVkV6ScK+t/aFN8uikg+CdDaXR55NJGeQgSfvSIriNUiZX",
-	"9xVclvv/gmz7nmRYhxWnQo1uihil6tlbVL2zIvLSkf6DqpS9eIuy147mWinMb+LHtxF4ZhnJCjO6RVoh",
-	"jb7mUU1xIXadSKO+MeeoGCiULCGHB2juj01SxqRMWb06g/6h/xsAAP//tlnBA9EHAAA=",
+	"H4sIAAAAAAAC/7xUTW/bMAz9KwG3oxenH9vBt3ZbhwA7DC16KnqQJTpRJ0saRRXzCv/3QVKaxG2A9TDk",
+	"ZJKS+PgeST+BdL13Fi0HaJ4gyDX2IpsXUrpo+YYFxxzw5DwSa8yetkErvEIrNz5jn43OUS8YGtCWP51D",
+	"BTx4LC6ukGDcRgSRGJLvus5oi+n15qh1zqCwMI4VEP6KmlBBczdF3T283+Z07QNKTkm/oUUS5nXlSOQo",
+	"GQo7EQ1DwxSxArSxh+YuObt820Iq6MNqr8LApO0qxUNW6LNT+wSe2Vbw+4Prkzieh4L0klOpp+SfZDvE",
+	"6ruTgrWzXwSL19SElJGEHCZ9UC62BneNsLFvSx+EUoQhHGRlBGuOhdMbUhlnV2+//0KBLdZ+nmrH5pAQ",
+	"t14JxsMymI1IyX5P2EED7+rdoNebKa8nYo7jK5QU0rZzKY90loXkZFrRp1vXrjOXKKSzUEEkAw2smX1o",
+	"6rrN4Tm5zuDPgMOcYp57zWb68nR28WMJFTwihVwwnMwX80VeCo9WeA0NnM0X87RIXvA686tjJl9ru8KQ",
+	"S/KufJMKmdJSQQPLfF6UgiI5Br50anhmhDY/E94bXbSoH0IRroj0Lwn32jBO25pHPQWCdzaUxpwuFmXx",
+	"giTtS4vgJkqZpnCs4Lyc/5fKnvc/lzVFvBRqdl3EKKgnx0C9tSLy2pH+g6rAnh0D9spRq5XC/A/7eByB",
+	"l5aRrDCzG6RHpNnX/ItL90Lse0HDdjhnZYBCyRLy9QDN3cshKWtStqx+PIHxfvwbAAD//ykjTbK8BgAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
